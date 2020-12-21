@@ -1,14 +1,30 @@
 var User = require('../models/user');
+var Movie = require('../models/movie');
 var jwt = require('jsonwebtoken');
 var config = require('../../config');
+const multer = require('multer');
 
 var superSecret = config.secret;
+
+
+const storage = multer.diskStorage({
+    destination: (req, file, callback) => {
+        callback(null, 'uploads/')
+    },
+    filename: (req, file, callback) => {
+        callback(null, `${Date.now()}_${file.originalname}`)
+    },
+});
+const upload = multer({ storage: storage });
+
 module.exports = function (app, express) {
 
     var apiRouter = express.Router();
 
-    // route to authenticate a user (POST http://localhost:8080/api/authenticate)
-    apiRouter.post('/authenticate', function (req, res) {
+    apiRouter.use('/uploads', express.static('uploads'));
+
+    // route to login a user (POST http://localhost:8080/api/authenticate)
+    apiRouter.post('/login', function (req, res) {
         console.log(req.body.username);
 
         // find the user
@@ -91,95 +107,184 @@ module.exports = function (app, express) {
         next(); // make sure we go to the next routes and don't stop here
     });
 
-    // test route to make sure everything is working 
     // accessed at GET http://localhost:8080/api
-    apiRouter.get('/', function (req, res) {
-        res.json({ message: 'hooray! welcome to our api!' });
+    apiRouter.use(function (req, res, next) {
+        console.log("Main");
+        next();
     });
-
+    apiRouter.get('/', function (req, res) {
+        res.json({ message: 'Hello! Welcom to our API' });
+    });
     // on routes that end in /users
     // ----------------------------------------------------
-    apiRouter.route('/users')
 
-        // create a user (accessed at POST http://localhost:8080/users)
-        .post(function (req, res) {
 
-            var user = new User();      // create a new instance of the User model
-            user.name = req.body.name;  // set the users name (comes from the request)
-            user.username = req.body.username;  // set the users username (comes from the request)
-            user.password = req.body.password;  // set the users password (comes from the request)
+    //====== U S E R ====== U S E R ====== U S E R ====== U S E R ====== U S E R ====== U S E R ====== U S E R ====== U S E R 
+    //apiRouter.route('/users')
+    // create a user (accessed at POST http://localhost:8080/users)
+    apiRouter.route('/users').post(function (req, res) {
+        var user = new User();      // create a new instance of the User model
+        user.name = req.body.name;  // set the users name (comes from the request)
+        user.username = req.body.username;  // set the users username (comes from the request)
+        user.password = req.body.password;  // set the users password (comes from the request)
+        user.save(function (err) {
+            if (err) {
+                // duplicate entry
+                if (err.code == 11000)
+                    return res.json({ success: false, message: err.message });
+                else
+                    return res.send(err);
+            }
 
+            // return a message
+            res.json({ message: 'User created!' });
+        });
+    })
+
+    // get all the users (accessed at GET http://localhost:8080/api/users)
+    apiRouter.route('/users').get(function (req, res) {
+        User.find(function (err, users) {
+            if (err) res.send(err);
+
+            // return the users
+            res.json(users);
+        });
+    });
+
+    // apiRouter.route('/users/:user_id')
+    // get the user with that id
+    apiRouter.route('/users/:user_id').get(function (req, res) {
+        User.findById(req.params.user_id, function (err, user) {
+            if (err) res.send(err);
+
+            // return that user
+            res.json(user);
+        });
+    })
+    // update the user with this id
+    apiRouter.route('/users/:user_id').put(function (req, res) {
+        User.findById(req.params.user_id, function (err, user) {
+
+            if (err) res.send(err);
+
+            // set the new user information if it exists in the request
+            if (req.body.name) user.name = req.body.name;
+            if (req.body.username) user.username = req.body.username;
+            if (req.body.password) user.password = req.body.password;
+
+            // save the user
             user.save(function (err) {
-                if (err) {
-                    // duplicate entry
-                    if (err.code == 11000)
-                        return res.json({ success: false, message: 'A user with that username already exists. ' });
-                    else
-                        return res.send(err);
-                }
+                if (err) res.send(err);
 
                 // return a message
-                res.json({ message: 'User created!' });
+                res.json({ message: 'User updated!' });
             });
 
+        });
+    })
+
+    // delete the user with this id
+    apiRouter.route('/users/:user_id').delete(function (req, res) {
+        User.remove({
+            _id: req.params.user_id
+        }, function (err, user) {
+            if (err) res.send(err);
+
+            res.json({ message: 'Successfully deleted' });
+        });
+    });
+
+    //====== M O V I E ====== M O V I E ====== M O V I E ====== M O V I E ====== M O V I E ====== M O V I E ====== M O V I E 
+    apiRouter.post('/movie/create', upload.single("image"), (req, res) => {
+        const movie = new Movie({
+            name: req.body.name,
+            price: req.body.price,
+            amount: req.body.amount,
+            description: req.body.description,
+            manufacturer: req.body.manufacturer,
+            caregory: req.body.caregory,
+            status: req.body.status,
+            image: req.file.filename
         })
+        movie.save((err, doc) => {
+            if (err) return res.json({ success: false, err });
+            let ress = doc;
+            ress.id = doc._id;
+            res.status(200).json({
+                success: true,
+                data: ress
+            })
+        })
+    })
 
-        // get all the users (accessed at GET http://localhost:8080/api/users)
-        .get(function (req, res) {
-            User.find(function (err, users) {
-                if (err) res.send(err);
+    apiRouter.get('/movie/list', (req, res) => {
+        Movie.find({}, (err, movie) => {
+            if (err) return res.status(400).send(err);
+            res.status(200).send(movie)
+        })
+    })
 
-                // return the users
-                res.json(users);
-            });
+    apiRouter.route('/movie/detail/:movie_id').get(function (req, res) {
+        Movie.findById(req.params.movie_id, function (err, movie) {
+            if (err)
+                res.send(err);
+            else
+                res.json({ message: 'User detail!', data: movie });
         });
 
-    // on routes that end in /users/:user_id
-    // ----------------------------------------------------
-    apiRouter.route('/users/:user_id')
+    });
 
-        // get the user with that id
-        .get(function (req, res) {
-            User.findById(req.params.user_id, function (err, user) {
-                if (err) res.send(err);
+    apiRouter.post('/movie/update', upload.single("image"), (req, res) => {
+        Movie.findById(req.body.id, function (err, movie) {
+            if (err) res.send(err);
+            console.log("bodyyyyyyyyyyyyyyyyyy", req.body, movie);
+            if (req.body.name) movie.name = req.body.name;
+            if (req.body.price) movie.price = req.body.price;
+            if (req.body.amount) movie.amount = req.body.amount;
+            if (req.body.description) movie.description = req.body.description;
+            if (req.body.manufacturer) movie.manufacturer = req.body.manufacturer;
+            if (req.body.caregory) movie.caregory = req.body.caregory;
+            if (req.body.status) movie.status = req.body.status;
+            if (req.body.image) movie.image = req.file.filename;
 
-                // return that user
-                res.json(user);
-            });
+            movie.save((err, doc) => {
+                if (err) return res.json({ success: false, err });
+                let ress = doc;
+                ress.id = doc._id;
+                res.status(200).json({
+                    success: true,
+                    data: ress
+                })
+            })
         })
+    });
 
-        // update the user with this id
-        .put(function (req, res) {
-            User.findById(req.params.user_id, function (err, user) {
+    apiRouter.route('/movie/update').post(function (req, res) {
+        Movie.findById(req.body.id, function (err, movie) {
+            if (err)
+                res.send(err);
+            else
+                console.log("bodyyyyyyyyyyyy", req);
+            res.json({ message: 'User detail!', data: req.body });
+        });
 
-                if (err) res.send(err);
+    });
 
-                // set the new user information if it exists in the request
-                if (req.body.name) user.name = req.body.name;
-                if (req.body.username) user.username = req.body.username;
-                if (req.body.password) user.password = req.body.password;
-
-                // save the user
-                user.save(function (err) {
-                    if (err) res.send(err);
-
-                    // return a message
-                    res.json({ message: 'User updated!' });
-                });
-
-            });
-        })
-
-        // delete the user with this id
-        .delete(function (req, res) {
-            User.remove({
-                _id: req.params.user_id
-            }, function (err, user) {
-                if (err) res.send(err);
-
-                res.json({ message: 'Successfully deleted' });
+    apiRouter.route('/movie/delete/:movie_id').post(function (req, res) {
+        // console.log(req)
+        console.log("idddddddddddddddddd", req.params.movie_id)
+        Movie.deleteOne({
+            _id: req.params.movie_id
+        }, function (err, movie) {
+            if (err)
+                res.send(err);
+            res.json({
+                status: "success",
+                data: 'Movie deleted'
             });
         });
+    })
+
 
     return apiRouter;
 };
