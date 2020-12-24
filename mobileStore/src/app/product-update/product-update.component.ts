@@ -1,30 +1,49 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { ProductService } from '../product-add/product.service';
 import { Router } from '@angular/router';
-import { ProductService } from './product.service';
 
 @Component({
-  selector: 'app-product-add',
-  templateUrl: './product-add.component.html',
-  styleUrls: ['./product-add.component.scss'],
+  selector: 'app-product-update',
+  templateUrl: './product-update.component.html',
+  styleUrls: ['./product-update.component.scss'],
 })
-export class ProductAddComponent implements OnInit {
+export class ProductUpdateComponent implements OnInit {
+  id: any = 0;
+
   product = {
     name: '',
     price: '',
     amount: '',
     description: '',
     manufacturer: '',
-    category: '',
+    caregory: '',
     status: '',
   };
   imageFile: any;
   submitted: boolean = false;
-  constructor(private productService: ProductService, private router: Router) {}
 
-  ngOnInit(): void {}
+  constructor(
+    route: ActivatedRoute,
+    private productService: ProductService,
+    private router: Router
+  ) {
+    route.params.subscribe((params) => {
+      this.id = params['id'];
+    });
+  }
 
-  createProduct(): void {
+  ngOnInit(): void {
+    this.productService.getProduct(this.id).subscribe((product: any) => {
+      if (product) {
+        this.product = product;
+      }
+    });
+  }
+
+  updateProduct(): void {
     var product = new FormData();
+    product.append('id', this.id);
     product.append('name', this.product.name);
     product.append('price', this.product.price);
     product.append('amount', this.product.amount);
@@ -34,7 +53,7 @@ export class ProductAddComponent implements OnInit {
     product.append('status', this.product.status);
     product.append('image', this.imageFile);
 
-    this.productService.create(product).subscribe(
+    this.productService.update(product).subscribe(
       (response) => {
         console.log(response);
         this.submitted = true;
@@ -60,7 +79,7 @@ export class ProductAddComponent implements OnInit {
       amount: '',
       description: '',
       manufacturer: '',
-      category: '',
+      caregory: '',
       status: '',
     };
   }

@@ -19,7 +19,7 @@ export class LoginComponent implements OnInit {
   login = () => {
     this.authenticationService.login(this.username, this.password).subscribe(
       (data) => {
-        if (data != null && data.username) {
+        if (data != null && data.token) {
           console.log('login Success');
           // this.router.navigateByUrl('/productList');
           this.router.navigateByUrl('/product/list');

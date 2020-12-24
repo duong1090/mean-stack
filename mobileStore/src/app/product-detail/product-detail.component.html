@@ -9,7 +9,7 @@
       <div class="col-6">
         <img
           class="mt-2 w-100"
-          src="data:image/JPEG;base64,{{ product.image }}"
+          src="{{ product.image }}"
         />
       </div>
       <div class="col-6">
@@ -17,7 +17,7 @@
         <p class="mt-2">{{ product.description }}</p>
         <p class="mt-2"><b>Item code :</b> {{ product.id }}</p>
         <p class="mt-2"><b>Manufacturer : </b> {{ product.manufacturer }}</p>
-        <p class="mt-2"><b>Category : </b>{{ product.category }}</p>
+        <p class="mt-2"><b>Category : </b>{{ product.caregory }}</p>
         <p class="mt-2">
           <b>Avaiable Units in Stock : </b>{{ product.amount }}
         </p>

@@ -22,7 +22,7 @@ export class AuthenticationService {
   public login = (username: string, password: string) => {
     console.log('loginService::::', username);
 
-    const loginUrl = `${Config.API_URL}user/login`;
+    const loginUrl = `${Config.API_URL}login`;
     console.log(loginUrl);
 
     return this.http
@@ -34,10 +34,11 @@ export class AuthenticationService {
         map((user) => {
           console.log('login:::pipe', user);
           if (user != null) {
-            let is_admin = user.username == 'admin' ? 1 : 0;
+            // let is_admin = user.username == 'admin' ? 1 : 0;
+            localStorage.setItem('apiToken', user.token);
             localStorage.setItem(
               'currentUser',
-              JSON.stringify({ ...user, is_admin })
+              JSON.stringify({ ...user, is_admin: 1 })
             );
             return user;
           } else {

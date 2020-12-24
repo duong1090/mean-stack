@@ -11,6 +11,7 @@ import { ProductListComponent } from './product-list/product-list.component';
 import { ProductDetailComponent } from './product-detail/product-detail.component';
 import { ProductAddComponent } from './product-add/product-add.component';
 import { CartComponent } from './cart/cart.component';
+import { ProductUpdateComponent } from './product-update/product-update.component';
 
 @NgModule({
   declarations: [
@@ -21,6 +22,7 @@ import { CartComponent } from './cart/cart.component';
     ProductDetailComponent,
     ProductAddComponent,
     CartComponent,
+    ProductUpdateComponent,
   ],
   imports: [BrowserModule, AppRoutingModule, FormsModule, HttpClientModule],
   providers: [],

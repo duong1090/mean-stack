@@ -29,10 +29,7 @@
               <h3>
                 <b>{{ product.name }}</b>
               </h3>
-              <img
-                class="mt-2"
-                src="data:image/JPEG;base64,{{ product.image }}"
-              />
+              <img class="mt-2" src="{{ product.image }}" />
               <p class="mt-5">{{ product.description }}</p>
               <p class="mt-2">{{ product.price }} USD</p>
               <p class="mt-2">{{ product.amount }} in Stock</p>
@@ -41,6 +38,12 @@
                 [routerLink]="['/product/detail/' + product.id]"
               >
                 <i class="fa fa-bars" aria-hidden="true"></i> Details</a
+              >
+              <a
+                class="btn btn-success ml-3"
+                [routerLink]="['/product/update/' + product.id]"
+              >
+                <i class="fa fa-bars" aria-hidden="true"></i> Update</a
               >
               <a
                 *ngIf="!currentUser.is_admin"
