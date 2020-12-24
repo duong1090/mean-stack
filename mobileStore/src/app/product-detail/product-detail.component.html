@@ -1,0 +1,35 @@
+<app-header
+  title="Product"
+  subtitle="Detail of product"
+  [countCart]="countCart"
+></app-header>
+<div class="container-fluid">
+  <div class="container">
+    <div class="row">
+      <div class="col-6">
+        <img
+          class="mt-2 w-100"
+          src="{{ product.image }}"
+        />
+      </div>
+      <div class="col-6">
+        <b>{{ product.name }}</b>
+        <p class="mt-2">{{ product.description }}</p>
+        <p class="mt-2"><b>Item code :</b> {{ product.id }}</p>
+        <p class="mt-2"><b>Manufacturer : </b> {{ product.manufacturer }}</p>
+        <p class="mt-2"><b>Category : </b>{{ product.caregory }}</p>
+        <p class="mt-2">
+          <b>Avaiable Units in Stock : </b>{{ product.amount }}
+        </p>
+        <p class="mt-2">{{ product.price }} USD</p>
+        <a class="btn btn-success" [routerLink]="['/product/list']">
+          <i class="fa fa-arrow-left" aria-hidden="true"></i>
+          Back
+        </a>
+        <a class="btn btn-warning ml-3" (click)="addToCart(product)">
+          <i class="fa fa-shopping-cart" aria-hidden="true"></i>Order now
+        </a>
+      </div>
+    </div>
+  </div>
+</div>

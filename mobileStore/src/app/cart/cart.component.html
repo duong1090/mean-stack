@@ -1,0 +1,51 @@
+<app-header
+  title="Cart"
+  subtitle="All the selected product in your cart"
+  [countCart]="itemsList.length"
+></app-header>
+
+<div class="container mt-5 d-flex flex-column align-content-center">
+  <div class="action-top mb-5">
+    <button type="button" (click)="gotoList()" class="btn btn-warning">
+      Continue shopping
+    </button>
+    <button type="button" (click)="onRemoveAll()" class="btn btn-danger">
+      Clear cart
+    </button>
+  </div>
+  <div>
+    <table class="table">
+      <thead class="thead-light">
+        <tr>
+          <th>Product</th>
+          <th>Quantity</th>
+          <th>Unit price</th>
+          <th>Price</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of itemsList; let i = index" [attr.data-index]="i">
+          <th>{{ item.prodName }}</th>
+          <th>{{ item.count }}</th>
+          <th>{{ item.unitPrice }}</th>
+          <th>{{ item.totalPrice }}</th>
+          <th>
+            <button class="btn btn-danger" (click)="onRemove(item, i)">
+              Remove
+            </button>
+          </th>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr>
+          <th></th>
+          <th></th>
+          <th>Grand total</th>
+          <th>{{ totalPrice }}</th>
+          <th></th>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+</div>

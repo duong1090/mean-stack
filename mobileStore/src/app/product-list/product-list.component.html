@@ -1,0 +1,60 @@
+<div class="d-flex flex-column">
+  <app-header
+    title="Product"
+    subtitle="All available product in our store"
+    [countCart]="countCart"
+    button="view-cart"
+  ></app-header>
+
+  <div class="container-fluid product-list">
+    <div class="container">
+      <div
+        class="d-flex flex-row justify-content-between mb-4 pb-4 border border-top-0 border-left-0 border-right-0"
+      >
+        <h3 style="align-self: center">Product List</h3>
+        <button
+          *ngIf="currentUser.is_admin"
+          type="button"
+          class="btn btn-primary"
+          routerLink="/product/add"
+        >
+          <i class="fa fa-plus" aria-hidden="true"></i>
+          Add
+        </button>
+      </div>
+      <div class="row">
+        <div *ngFor="let product of productList" class="col-4 mb-4">
+          <div class="card">
+            <div class="card-body">
+              <h3>
+                <b>{{ product.name }}</b>
+              </h3>
+              <img class="mt-2" src="{{ product.image }}" />
+              <p class="mt-5">{{ product.description }}</p>
+              <p class="mt-2">{{ product.price }} USD</p>
+              <p class="mt-2">{{ product.amount }} in Stock</p>
+              <a
+                class="btn btn-primary"
+                [routerLink]="['/product/detail/' + product.id]"
+              >
+                <i class="fa fa-bars" aria-hidden="true"></i> Details</a
+              >
+              <a
+                class="btn btn-success ml-3"
+                [routerLink]="['/product/update/' + product.id]"
+              >
+                <i class="fa fa-bars" aria-hidden="true"></i> Update</a
+              >
+              <a
+                *ngIf="!currentUser.is_admin"
+                class="btn btn-danger ml-3"
+                (click)="addToCart(product)"
+                ><i class="fa fa-shopping-cart" aria-hidden="true"></i> Order</a
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
