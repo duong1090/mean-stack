@@ -18,22 +18,22 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 module.exports = function (app, express) {
-
+    
     var apiRouter = express.Router();
-
+    
     apiRouter.use('/uploads', express.static('uploads'));
-
+    
     // route to login a user (POST http://localhost:8080/api/authenticate)
     apiRouter.post('/login', function (req, res) {
         console.log(req.body.username);
-
+        
         // find the user
         User.findOne({
             username: req.body.username
         }).select('name username password').exec(function (err, user) {
-
+            
             if (err) throw err;
-
+            
             // no user with that username was found
             if (!user) {
                 res.json({
@@ -41,7 +41,7 @@ module.exports = function (app, express) {
                     message: 'Authentication failed. User not found.'
                 });
             } else if (user) {
-
+                
                 // check if password matches
                 var validPassword = user.comparePassword(req.body.password);
                 if (!validPassword) {
@@ -50,7 +50,7 @@ module.exports = function (app, express) {
                         message: 'Authentication failed. Wrong password.'
                     });
                 } else {
-
+                    
                     // if user is found and password is right
                     // create a token
                     var token = jwt.sign({
@@ -59,7 +59,7 @@ module.exports = function (app, express) {
                     }, superSecret, {
                         expiresIn: '24h' // expires in 24 hours
                     });
-
+                    
                     // return the information including token as JSON
                     res.json({
                         success: true,
@@ -67,12 +67,31 @@ module.exports = function (app, express) {
                         token: token
                     });
                 }
-
+                
             }
-
+            
         });
     });
-
+    // create a user (accessed at POST http://localhost:8080/users)
+    apiRouter.route('/users/create').post(function (req, res) {
+        var user = new User();      // create a new instance of the User model
+        user.name = req.body.name;  // set the users name (comes from the request)
+        user.username = req.body.username;  // set the users username (comes from the request)
+        user.password = req.body.password;  // set the users password (comes from the request)
+        user.save(function (err) {
+            if (err) {
+                // duplicate entry
+                if (err.code == 11000)
+                    return res.json({ success: false, message: err.message });
+                else
+                    return res.send(err);
+            }
+    
+            // return a message
+            res.json({ message: 'User created!' });
+        });
+    })
+    
     // route middleware to verify a token
     apiRouter.use(function (req, res, next) {
         // do logging
@@ -121,28 +140,8 @@ module.exports = function (app, express) {
 
     //====== U S E R ====== U S E R ====== U S E R ====== U S E R ====== U S E R ====== U S E R ====== U S E R ====== U S E R 
     //apiRouter.route('/users')
-    // create a user (accessed at POST http://localhost:8080/users)
-    apiRouter.route('/users').post(function (req, res) {
-        var user = new User();      // create a new instance of the User model
-        user.name = req.body.name;  // set the users name (comes from the request)
-        user.username = req.body.username;  // set the users username (comes from the request)
-        user.password = req.body.password;  // set the users password (comes from the request)
-        user.save(function (err) {
-            if (err) {
-                // duplicate entry
-                if (err.code == 11000)
-                    return res.json({ success: false, message: err.message });
-                else
-                    return res.send(err);
-            }
-
-            // return a message
-            res.json({ message: 'User created!' });
-        });
-    })
-
     // get all the users (accessed at GET http://localhost:8080/api/users)
-    apiRouter.route('/users').get(function (req, res) {
+    apiRouter.route('/users/list').get(function (req, res) {
         User.find(function (err, users) {
             if (err) res.send(err);
 
@@ -150,7 +149,6 @@ module.exports = function (app, express) {
             res.json(users);
         });
     });
-
     // apiRouter.route('/users/:user_id')
     // get the user with that id
     apiRouter.route('/users/:user_id').get(function (req, res) {
@@ -182,7 +180,6 @@ module.exports = function (app, express) {
 
         });
     })
-
     // delete the user with this id
     apiRouter.route('/users/:user_id').delete(function (req, res) {
         User.remove({
