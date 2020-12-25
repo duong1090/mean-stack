@@ -14,7 +14,7 @@ app.use(bodyParser.json());
 app.use(function (req, res, next) {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET,POST');
-    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With, content-type, Authorization,x-access-token');
+    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Authorization, x-access-token, User-Agent, Referer, Accept');
     next();
 })
 
@@ -26,7 +26,7 @@ mongoose.set('useCreateIndex', true);
 
 app.use(express.static(__dirname + '/public'));
 
-var apiRouter = require('./app/routes/api')(app, express);
+var apiRouter = api(app, express);
 app.use('/api', apiRouter);
 
 app.get('*', function (req, res) {

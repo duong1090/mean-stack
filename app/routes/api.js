@@ -93,38 +93,38 @@ module.exports = function (app, express) {
     })
     
     // route middleware to verify a token
-    // apiRouter.use(function (req, res, next) {
-    //     // do logging
-    //     console.log('Somebody just came to our app!');
+    apiRouter.use(function (req, res, next) {
+        // do logging
+        console.log('Somebody just came to our app!');
 
-    //     // check header or url parameters or post parameters for token
-    //     var token = req.body.token || req.query.token || req.headers['x-access-token'];
+        // check header or url parameters or post parameters for token
+        var token = req.body.token || req.query.token || req.headers['x-access-token'];
 
-    //     // decode token
-    //     if (token) {
+        // decode token
+        if (token) {
 
-    //         // verifies secret and checks exp
-    //         jwt.verify(token, superSecret, function (err, decoded) {
-    //             if (err)
-    //                 return res.json({ success: false, message: 'Failed to authenticate token.' });
-    //             else
-    //                 // if everything is good, save to request for use in other routes
-    //                 req.decoded = decoded;
-    //         });
+            // verifies secret and checks exp
+            jwt.verify(token, superSecret, function (err, decoded) {
+                if (err)
+                    return res.json({ success: false, message: 'Failed to authenticate token.' });
+                else
+                    // if everything is good, save to request for use in other routes
+                    req.decoded = decoded;
+            });
 
-    //     } else {
+        } else {
 
-    //         // if there is no token
-    //         // return an HTTP response of 403 (access forbidden) and an error message
-    //         return res.status(403).send({
-    //             success: false,
-    //             message: 'No token provided.'
-    //         });
+            // if there is no token
+            // return an HTTP response of 403 (access forbidden) and an error message
+            return res.status(403).send({
+                success: false,
+                message: 'No token provided.'
+            });
 
-    //     }
+        }
 
-    //     next(); // make sure we go to the next routes and don't stop here
-    // });
+        next(); // make sure we go to the next routes and don't stop here
+    });
 
     // accessed at GET http://localhost:8080/api
     apiRouter.use(function (req, res, next) {
