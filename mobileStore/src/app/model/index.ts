@@ -5,7 +5,7 @@ export interface Product {
   amount?: string;
   description?: string;
   manufacturer?: string;
-  category?: string;
+  caregory?: string;
   status?: 'New' | 'Old' | 'Refurbished';
   url?: string;
   image?: string;

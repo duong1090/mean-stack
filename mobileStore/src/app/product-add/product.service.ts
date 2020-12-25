@@ -4,6 +4,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { map } from 'rxjs/operators';
 import { Config } from '../config/server.config';
 import { Product } from 'src/app/model';
+import { isNgTemplate } from '@angular/compiler';
 
 const createUrl = `${Config.API_URL}movie/create`;
 
@@ -27,6 +28,10 @@ export class ProductService {
 
   update(data: any): Observable<any> {
     return this.httpClient.post(`${Config.API_URL}movie/update`, data);
+  }
+
+  delete(id: any): Observable<any> {
+    return this.httpClient.post(Config.API_URL.concat('movie/delete'), { id });
   }
 
   getListProduct = () => {
@@ -55,6 +60,7 @@ export class ProductService {
         if (data && data.data) {
           return {
             ...data.data,
+            id: data.data._id,
             image: Config.API_UPLOAD.concat(data.data.image),
           };
         } else {

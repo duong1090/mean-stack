@@ -49,7 +49,7 @@ export class ProductUpdateComponent implements OnInit {
     product.append('amount', this.product.amount);
     product.append('description', this.product.description);
     product.append('manufacturer', this.product.manufacturer);
-    product.append('caregory', this.product.category);
+    product.append('caregory', this.product.caregory);
     product.append('status', this.product.status);
     product.append('image', this.imageFile);
 

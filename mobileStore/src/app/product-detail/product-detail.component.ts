@@ -24,6 +24,12 @@ export class ProductDetailComponent implements OnInit {
     });
   }
 
+  delete = (id: any) => {
+    this.productService.delete(id).subscribe((data) => {
+      if (data) console.log('delete::::');
+    });
+  };
+
   addToCart = (item: any) => {
     this.cartService.addToCart(item).subscribe((data) => {
       if (data) {

@@ -7,10 +7,7 @@
   <div class="container">
     <div class="row">
       <div class="col-6">
-        <img
-          class="mt-2 w-100"
-          src="{{ product.image }}"
-        />
+        <img class="mt-2 w-100" src="{{ product.image }}" />
       </div>
       <div class="col-6">
         <b>{{ product.name }}</b>
@@ -25,6 +22,14 @@
         <a class="btn btn-success" [routerLink]="['/product/list']">
           <i class="fa fa-arrow-left" aria-hidden="true"></i>
           Back
+        </a>
+        <a
+          class="btn btn-danger ml-3"
+          (click)="delete(product.id)"
+          [routerLink]="['/product/list']"
+        >
+          <i class="fa fa-trash" aria-hidden="true"></i>
+          Delete
         </a>
         <a class="btn btn-warning ml-3" (click)="addToCart(product)">
           <i class="fa fa-shopping-cart" aria-hidden="true"></i>Order now
