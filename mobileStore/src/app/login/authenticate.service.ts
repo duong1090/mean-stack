@@ -22,7 +22,7 @@ export class AuthenticationService {
   public login = (username: string, password: string) => {
     console.log('loginService::::', username);
 
-    const loginUrl = `${Config.API_URL}login`;
+    const loginUrl = `${Config.API_URL_LOGIN}login`;
     console.log(loginUrl);
 
     return this.http
