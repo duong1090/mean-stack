@@ -20,22 +20,22 @@ export class CartService {
     return this.count;
   }
 
-  public getCart = () => {
-    const user: any = this.authenticationService.currentUserValue;
-    const id: any = user && user.id ? user.id : '';
-    return this.http
-      .get<any>(Config.API_URL.concat('cart/list').concat(`/${id}`))
-      .pipe(
-        map((list) => {
-          console.log('cart:::pipe', list);
-          if (list && list.length) {
-            return list;
-          } else {
-            return null;
-          }
-        })
-      );
-  };
+  // public getCart = () => {
+  //   const user: any = this.authenticationService.currentUserValue;
+  //   const id: any = user && user.id ? user.id : '';
+  //   return this.http
+  //     .get<any>(Config.API_URL.concat('cart/list').concat(`/${id}`))
+  //     .pipe(
+  //       map((list) => {
+  //         console.log('cart:::pipe', list);
+  //         if (list && list.length) {
+  //           return list;
+  //         } else {
+  //           return null;
+  //         }
+  //       })
+  //     );
+  // };
 
   public removeCart = (item: any) => {
     return this.http

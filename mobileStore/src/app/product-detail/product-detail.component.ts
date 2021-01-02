@@ -33,19 +33,19 @@ export class ProductDetailComponent implements OnInit {
   addToCart = (item: any) => {
     this.cartService.addToCart(item).subscribe((data) => {
       if (data) {
-        this.getCountCart();
+        // this.getCountCart();
       }
     });
   };
 
-  getCountCart = () => {
-    this.cartService.getCart().subscribe((data) => {
-      if (data) {
-        this.countCart = data.length;
-        console.log('getCountCart:::', this.countCart);
-      }
-    });
-  };
+  // getCountCart = () => {
+  //   this.cartService.getCart().subscribe((data) => {
+  //     if (data) {
+  //       this.countCart = data.length;
+  //       console.log('getCountCart:::', this.countCart);
+  //     }
+  //   });
+  // };
 
   ngOnInit(): void {
     this.productService.getProduct(this.id).subscribe((product: Product) => {

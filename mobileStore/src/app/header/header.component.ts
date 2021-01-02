@@ -21,20 +21,20 @@ export class HeaderComponent implements OnInit {
     private router: Router
   ) {}
 
-  getCart = () => {
-    this.cartService.getCart().subscribe((data) => {
-      if (data) {
-        this.countCart = data.length;
-      }
-    });
-  };
+  // getCart = () => {
+  //   this.cartService.getCart().subscribe((data) => {
+  //     if (data) {
+  //       this.countCart = data.length;
+  //     }
+  //   });
+  // };
 
   gotoCart = () => {
     this.router.navigateByUrl('/cart');
   };
 
   ngOnInit(): void {
-    this.getCart();
+    // this.getCart();
   }
 
   getCurrentUser = () => {

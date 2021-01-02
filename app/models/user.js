@@ -7,8 +7,10 @@ var bcrypt = require('bcrypt-nodejs');
 // });
 var UserSchema=new Schema({
     name: {type:String ,required:true},
-    username: {type:String ,required:true, index:{unique:true}},
+    username: {type:String , index:{unique:true}},
     password:{type:String},
+    googleId:{type:String},
+    email:{type:String},
 })
 
 UserSchema.methods.comparePassword = function(tempPassword) {
