@@ -7,27 +7,22 @@
         <span class="login100-form-title"> Account Login </span>
 
         <div class="wrap-input100 validate-input mt-5">
-          <input
-            class="input100"
-            type="text"
-            (keyup)="keyUpUsername($event)"
-            placeholder="Username"
-          />
+          <input class="input100" type="text" (keyup)="keyUpUsername($event)" placeholder="Username" />
           <span class="focus-input100-1"></span>
           <span class="focus-input100-2"></span>
         </div>
 
         <div class="wrap-input100 rs1 validate-input">
-          <input
-            class="input100"
-            type="password"
-            (keyup)="keyUpPassword($event)"
-            placeholder="Password"
-          />
+          <input class="input100" type="password" (keyup)="keyUpPassword($event)" placeholder="Password" />
           <span class="focus-input100-1"></span>
           <span class="focus-input100-2"></span>
         </div>
-
+        <div>
+          <a (click)="signInWithFB()" class="btn btn-info"><span class="fa fa-google-plus"></span>
+            Facebook</a>
+          <a (click)="signInWithGoogle()" class="btn btn-danger"><span class="fa fa-google-plus"></span>
+            Google</a>
+        </div>
         <div class="container-login100-form-btn mt-5">
           <button class="login100-form-btn">Sign in</button>
         </div>

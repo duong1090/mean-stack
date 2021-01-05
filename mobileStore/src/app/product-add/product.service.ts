@@ -5,6 +5,7 @@ import { map } from 'rxjs/operators';
 import { Config } from '../config/server.config';
 import { Product } from 'src/app/model';
 import { isNgTemplate } from '@angular/compiler';
+import { Router } from '@angular/router';
 
 const createUrl = `${Config.API_URL}movie/create`;
 
@@ -14,31 +15,61 @@ const createUrl = `${Config.API_URL}movie/create`;
 export class ProductService {
   private headerHttp: HttpHeaders;
 
-  constructor(private httpClient: HttpClient) {
+  constructor(private httpClient: HttpClient,
+    private router: Router) {
+    this.isLogin()
     let headers: any = {
       'Content-Type': 'application/json',
       'x-access-token': localStorage.getItem('apiToken'),
     };
+    var values = [],
+      keys = Object.keys(localStorage),
+      i = keys.length;
+
+    while (i--) {
+      values.push(localStorage.getItem(keys[i]));
+    }
+    /// chỗ này t đọc localstore ra cái values. token t lưu trong values['apiToken']
+    console.log('localStoragelocalStorage', values);
     this.headerHttp = headers;
+    console.log('headersheaders', this.headerHttp);
+  }
+
+  isLogin() {
+    // IF NGƯỢC
+    if (!localStorage.getItem('apiToken') || localStorage.getItem('apiToken') == undefined) {
+      this.router.navigate(['/login'])
+    }
   }
 
   create(data: any): Observable<any> {
+    this.isLogin()
+
     return this.httpClient.post(createUrl, data);
   }
 
   update(data: any): Observable<any> {
+    this.isLogin()
+
     return this.httpClient.post(`${Config.API_URL}movie/update`, data);
   }
 
   delete(id: any): Observable<any> {
-    return this.httpClient.post(Config.API_URL.concat('movie/delete'), { id });
+    this.isLogin()
+
+    return this.httpClient.post(Config.API_URL.concat('movie/delete'), { id }, {headers: this.headerHttp});
   }
 
   getListProduct = () => {
-    return this.httpClient.get<any>(`${Config.API_URL}movie/list`).pipe(
+    this.isLogin()
+
+    return this.httpClient.get<any>(`${Config.API_URL}movie/list`, {headers: this.headerHttp}).pipe(
       map((data) => {
-        console.log('getListProduct0:::pipe', data);
         if (data) {
+          console.log('getListProduct0:::pipe', data);
+          if (data.message == 'Failed to authenticate token.' || data.message == 'No token provided.')
+            return this.router.navigate(['/login'])
+
           return data.map((item: any) => {
             return {
               ...item,
@@ -54,7 +85,8 @@ export class ProductService {
   };
 
   getProduct = (id: number) => {
-    return this.httpClient.get<any>(`${Config.API_URL}movie/detail/${id}`).pipe(
+    this.isLogin()
+    return this.httpClient.get<any>(`${Config.API_URL}movie/detail/${id}`, {headers: this.headerHttp}).pipe(
       map((data) => {
         console.log('getListProduct0:::pipe', data);
         if (data && data.data) {

@@ -3,6 +3,7 @@ import { Product } from 'src/app/model';
 import { ProductService } from '../product-add/product.service';
 import { CartService } from '../cart/cart.service';
 import { AuthenticationService } from '../login/authenticate.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-product-list',
@@ -18,12 +19,15 @@ export class ProductListComponent implements OnInit {
     private productService: ProductService,
     private cartService: CartService,
     private authenticationService: AuthenticationService,
+    private router: Router
   ) {}
 
   getListProduct = () => {
     this.productService.getListProduct().subscribe((productList: Product[]) => {
+      if (productList.length)
+        this.productList = productList;
+      else this.router.navigateByUrl('/login');
       console.log('getListProduct', typeof productList[0].image);
-      this.productList = productList;
     });
   };
 
