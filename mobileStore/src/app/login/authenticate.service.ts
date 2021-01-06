@@ -11,7 +11,7 @@ import { Router } from '@angular/router';
 export class AuthenticationService {
   private currentUserSubject: Object;
 
-  constructor(private http: HttpClient,private router: Router) {
+  constructor(private http: HttpClient, private router: Router) {
     const user = localStorage.getItem('currentUser');
     this.currentUserSubject = JSON.parse(user ? user : '{}');
   }
@@ -22,8 +22,8 @@ export class AuthenticationService {
 
   public loginGoogle(param: any) {
     this.http.post<any>(`${Config.API_URL_AUTH}login`, param).subscribe(
-      res  => {
-        console.log('ressress',res)
+      (res) => {
+        console.log('ressress', res);
         if (res != null) {
           // let is_admin = user.username == 'admin' ? 1 : 0;
           localStorage.setItem('apiToken', res.token);
@@ -31,23 +31,23 @@ export class AuthenticationService {
             'currentUser',
             JSON.stringify({ ...res, is_admin: 1 })
           );
-          this.router.navigate(['/product/list'])
+          this.router.navigate(['/product/list']);
           return res;
         } else {
           return null;
         }
-        console.log("Success")
+        console.log('Success');
       },
-      err => {
+      (err) => {
         console.log(err);
       }
-    )
+    );
   }
 
   public loginFacebook(param: any) {
     this.http.post<any>(`${Config.API_URL_AUTH}login`, param).subscribe(
-      res  => {
-        console.log('ressress',res)
+      (res) => {
+        console.log('ressress', res);
         if (res != null) {
           // let is_admin = user.username == 'admin' ? 1 : 0;
           localStorage.setItem('apiToken', res.token);
@@ -55,17 +55,17 @@ export class AuthenticationService {
             'currentUser',
             JSON.stringify({ ...res, is_admin: 1 })
           );
-          this.router.navigate(['/product/list'])
+          this.router.navigate(['/product/list']);
           return res;
         } else {
           return null;
         }
-        console.log("Success")
+        console.log('Success');
       },
-      err => {
+      (err) => {
         console.log(err);
       }
-    )
+    );
   }
 
   public login = (username: string, password: string) => {
@@ -78,7 +78,7 @@ export class AuthenticationService {
       .post<any>(loginUrl, {
         username,
         password,
-        provider: 'LOCAL'
+        provider: 'LOCAL',
       })
       .pipe(
         map((user) => {
@@ -100,5 +100,6 @@ export class AuthenticationService {
 
   public logout = () => {
     localStorage.removeItem('currentUser');
+    localStorage.removeItem('apiToken');
   };
 }

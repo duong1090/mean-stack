@@ -1,5 +1,7 @@
+const server = '113.162.167.183:1000';
+
 export const Config = {
-  API_URL_AUTH: 'http://localhost:8080/auth/',
-  API_URL: 'http://localhost:8080/api/',
-  API_UPLOAD: 'http://localhost:8080/api/uploads/',
+  API_URL_AUTH: `http://${server}/auth/`,
+  API_URL: `http://${server}/api/`,
+  API_UPLOAD: `http://${server}/api/uploads/`,
 };
