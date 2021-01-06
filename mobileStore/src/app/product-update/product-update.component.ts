@@ -53,6 +53,8 @@ export class ProductUpdateComponent implements OnInit {
     product.append('status', this.product.status);
     product.append('image', this.imageFile);
 
+    console.log('updateProduct:::', product, this.product);
+
     this.productService.update(product).subscribe(
       (response) => {
         console.log(response);
