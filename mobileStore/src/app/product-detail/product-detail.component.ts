@@ -14,6 +14,8 @@ export class ProductDetailComponent implements OnInit {
   product: Product = {};
   countCart: any = 0;
   id: number = 0;
+  currentUser: any = {};
+
   constructor(
     route: ActivatedRoute,
     private productService: ProductService,
@@ -23,6 +25,11 @@ export class ProductDetailComponent implements OnInit {
       this.id = params['id'];
     });
   }
+
+  getCurrentUser = () => {
+    this.currentUser = this.authenticationService.currentUserValue;
+    console.log('getCurrentUser:::', this.currentUser);
+  };
 
   delete = (id: any) => {
     this.productService.delete(id).subscribe((data) => {
@@ -54,5 +61,7 @@ export class ProductDetailComponent implements OnInit {
         this.product = product;
       }
     });
+
+    this.getCurrentUser();
   }
 }

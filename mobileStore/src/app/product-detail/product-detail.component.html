@@ -24,6 +24,7 @@
           Back
         </a>
         <a
+          *ngIf="currentUser.is_admin"
           class="btn btn-danger ml-3"
           (click)="delete(product.id)"
           [routerLink]="['/product/list']"
