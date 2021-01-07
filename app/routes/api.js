@@ -1,10 +1,12 @@
 var User = require('../models/user');
 var Movie = require('../models/movie');
+var Cart = require('../models/cart');
 var jwt = require('jsonwebtoken');
 var config = require('../../config');
 const multer = require('multer');
 var User = require('../models/user')
-var passport = require('passport')
+var passport = require('passport');
+const { count } = require('../models/user');
 
 var superSecret = config.secret;
 
@@ -36,10 +38,12 @@ module.exports = function (app, express) {
             jwt.verify(token, superSecret, function (err, decoded) {
                 if (err)
                     return res.json({ success: false, message: 'Failed to authenticate token.' });
-                else
+                else {
                     // if everything is good, save to request for use in other routes
                     req.decoded = decoded;
-                next(); // make sure we go to the next routes and don't stop here
+                    console.log("tokenIDDDDDDDDDDDDDDDD ", decoded.id);
+                    next(); // make sure we go to the next routes and don't stop here
+                }
             });
         } else {
             // if there is no token
@@ -206,7 +210,7 @@ module.exports = function (app, express) {
             if (err)
                 return res.json(err)
             else
-            return res.json(movie)
+                return res.json(movie)
         })
     })
 
@@ -221,16 +225,16 @@ module.exports = function (app, express) {
     });
 
 
-    apiRouter.route('/movie/update').post(function (req, res) {
-        Movie.findById(req.body.id, function (err, movie) {
-            if (err)
-                return res.json(err);
-            else
-                console.log("bodyyyyyyyyyyyy", req);
-            return res.json({ message: 'User detail!', data: req.body });
-        });
+    // apiRouter.route('/movie/update').post(function (req, res) {
+    //     Movie.findById(req.body.id, function (err, movie) {
+    //         if (err)
+    //             return res.json(err);
+    //         else
+    //             console.log("bodyyyyyyyyyyyy", req);
+    //         return res.json({ message: 'User detail!', data: req.body });
+    //     });
 
-    });
+    // });
 
     apiRouter.route('/movie/delete').post(function (req, res) {
         // console.log(req)
@@ -240,13 +244,189 @@ module.exports = function (app, express) {
         }, function (err, movie) {
             if (err)
                 return res.json(err);
-            return res.json({
-                status: "success",
-                data: 'Movie deleted'
-            });
+            return res.json({ success: true, message: 'Movie deleted' });
         });
     })
 
+    ///////////////////////////////////// CART CART CART CART CART CART CART CART CART CART CART CART CART CART CART CART CART CART 
+    apiRouter.get('/cart/list', (req, res) => {
+        let user_id = req.decoded.id;
+        Cart.find({ user_id }, async (err, carts) => {
+            if (err)
+                return res.json(err)
+            else {
+                const data = []
+                if (carts && carts.length) {
+                    let prod_ids = carts.map(c => {
+                        return c.prod_id;
+                    })
+                    Movie.find({ '_id': { $in: prod_ids } }, function (err, movies) {
+                        let data = carts.map((cart, index) => {
+                            for (let index = 0; index < movies.length; index++) {
+                                const movie = movies[index];
+                                if (movie._id == cart.prod_id) {
+                                    return {
+                                        id: cart._id,
+                                        userId: cart.user_id,
+                                        prodId: movie._id,
+                                        prodName: movie.name,
+                                        count: cart.count,
+                                        unitPrice: movie.price,
+                                        totalPrice: cart.count * movie.price
+                                    }
+                                }
+                            }
+                        })
+                        console.log("counttttttt ", data)
+                        return res.json(data)
+                    })
+                } else return res.json(data)
+            }
+        })
+    })
+
+    apiRouter.route('/cart/add').post(function (req, res) {
+        console.log("addddddd", req.decoded.id);
+        if (!req.decoded.id || !req.body.prod_id) {
+            return res.json({
+                success: false,
+                message: "Dữ liệu sai!"
+            })
+        }
+        const newCart = new Cart({
+            user_id: req.decoded.id,
+            prod_id: req.body.prod_id,
+            count: 1,
+            // count: req.body.count,
+        })
+        Cart.findOne({ "user_id": newCart.user_id, "prod_id": newCart.prod_id }, (err, cart) => {
+            if (cart && cart.count) {
+                cart.count += newCart.count;
+                cart.save((err, doc) => {
+                    if (err) return res.json({ success: false, err });
+                    let ress = doc;
+                    ress.id = doc._id;
+                    return res.status(200).json({
+                        success: true,
+                        data: ress
+                    })
+                })
+            }
+            else {
+                newCart.save((err, doc) => {
+                    if (err) return res.json({ success: false, err });
+                    let ress = doc;
+                    ress.id = doc._id;
+                    return res.status(200).json({
+                        success: true,
+                        data: ress
+                    })
+                })
+            }
+        })
+    });
+
+    apiRouter.route('/cart/delete/:cart_id').post(function (req, res) {
+        console.log("idddddddddddddddddd", req.params.cart_id)
+        Cart.deleteOne({
+            _id: req.params.cart_id
+        }, function (err, movie) {
+            if (err)
+                return res.json(err);
+            return res.json({
+                status: "success",
+                data: 'Cart deleted'
+            });
+        });
+
+    });
+
+    apiRouter.route('/cart/delete-all/').post(function (req, res) {
+        console.log("iddddddddddddddddddeleteall", req.decoded.id)
+        Cart.deleteMany({
+            user_id: req.decoded.id
+        }, function (err, movie) {
+            if (err)
+                return res.json(err);
+            return res.json({
+                status: "success",
+                data: 'Cart deleted'
+            });
+        });
+
+    });
+
+
+    apiRouter.route('/cart/decrease/:cart_id').post(function (req, res) {
+        console.log("idddddddddddddddddd", req.params.cart_id)
+
+        Cart.findOne({
+            _id: req.params.cart_id
+        }, function (err, cart) {
+            if (err)
+                return res.json(err);
+            else {
+                if (!cart || cart.count < 2)
+                    return res.json({
+                        status: "success",
+                        data: cart
+                    });
+                else {
+                    cart.count += 1;
+                    cart.save((err, doc) => {
+                        if (err) return res.json({ success: false, err });
+                        let ress = doc;
+                        ress.id = doc._id;
+                        return res.status(200).json({
+                            success: true,
+                            data: ress
+                        })
+                    })
+                }
+            }
+
+        });
+
+    });
+
+    apiRouter.route('/cart/increase/:cart_id').post(function (req, res) {
+        console.log("idddddddddddddddddd", req.params.cart_id)
+
+        Cart.findOne({
+            _id: req.params.cart_id
+        }, function (err, cart) {
+            if (err)
+                return res.json(err);
+            else {
+                Movie.findById(cart.prod_id, function (err, movie) {
+                    if (err)
+                        return res.json({ status: false, message: 'NO product' });
+                    else {
+                        if (!cart || cart.count >= movie.amount)
+                            return res.json({
+                                status: "success",
+                                data: cart
+                            });
+                        else {
+                            cart.count += 1;
+                            cart.save((err, doc) => {
+                                if (err) return res.json({ success: false, err });
+                                let ress = doc;
+                                ress.id = doc._id;
+                                return res.status(200).json({
+                                    success: true,
+                                    data: ress
+                                })
+                            })
+                        }
+                    }
+                })
+
+            }
+
+        });
+
+    });
 
     return apiRouter;
 };

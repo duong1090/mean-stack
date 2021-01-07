@@ -4,7 +4,7 @@ var config = require('../../config');
 var User = require('../models/user');
 var superSecret = config.secret;
 
-const time_expire = '180s'
+const time_expire = '1h'
 
 module.exports = function (app, express) {
     var apiRouter = express.Router();
@@ -39,7 +39,7 @@ module.exports = function (app, express) {
                             name: user.name,
                             id: user.id
                         }, superSecret, {
-                            expiresIn: '15s' // expires in 24 hours
+                            expiresIn: time_expire // expires in 24 hours
                         });
                         // return the information including token as JSON
                         return res.json({
