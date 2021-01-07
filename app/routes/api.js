@@ -82,8 +82,8 @@ module.exports = function (app, express) {
 
     apiRouter.post('/movie/update', upload.single("image"), (req, res) => {
         Movie.findById(req.body.id, function (err, movie) {
-            if (err) return res.json(err);
-            console.log("bodyyyyyyyyyyyyyyyyyy", req.body, movie);
+            if (err)
+                return res.json(err);
             if (req.body.name) movie.name = req.body.name;
             if (req.body.price) movie.price = req.body.price;
             if (req.body.amount) movie.amount = req.body.amount;
@@ -91,9 +91,10 @@ module.exports = function (app, express) {
             if (req.body.manufacturer) movie.manufacturer = req.body.manufacturer;
             if (req.body.caregory) movie.caregory = req.body.caregory;
             if (req.body.status) movie.status = req.body.status;
-            if (req.body.image) movie.image = req.file.filename;
+            if (req.file.filename) movie.image = req.file.filename;
 
-            if (movie)
+            if (movie) {
+                console.log("bodyyyyyyyyyyyyyyyyyy", req.body, movie);
                 movie.save((err, doc) => {
                     if (err) return res.json({ success: false, err });
                     let ress = doc;
@@ -103,6 +104,8 @@ module.exports = function (app, express) {
                         data: ress
                     })
                 })
+
+            }
             else return res.json({
                 success: false,
                 message: "Dữ liệu trống!"
@@ -200,9 +203,9 @@ module.exports = function (app, express) {
 
     apiRouter.get('/movie/list', (req, res) => {
         Movie.find({}, (err, movie) => {
-            // if (err)
-            //     return res.json(err)
-            // else
+            if (err)
+                return res.json(err)
+            else
             return res.json(movie)
         })
     })

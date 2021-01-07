@@ -17,7 +17,6 @@ import { ProductDetailComponent } from './product-detail/product-detail.componen
 import { ProductAddComponent } from './product-add/product-add.component';
 import { CartComponent } from './cart/cart.component';
 import { ProductUpdateComponent } from './product-update/product-update.component';
-import { NotifierModule } from 'angular-notifier';
 
 @NgModule({
   declarations: [
@@ -30,7 +29,7 @@ import { NotifierModule } from 'angular-notifier';
     CartComponent,
     ProductUpdateComponent,
   ],
-  imports: [BrowserModule, AppRoutingModule, FormsModule, HttpClientModule,SocialLoginModule, NotifierModule],
+  imports: [BrowserModule, AppRoutingModule, FormsModule, HttpClientModule,SocialLoginModule],
   providers: [
     {
       provide: 'SocialAuthServiceConfig',
