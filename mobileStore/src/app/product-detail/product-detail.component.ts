@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Product } from 'src/app/model';
 import { CartService } from '../cart/cart.service';
+import { AuthenticationService } from '../login/authenticate.service';
 
 import { ProductService } from '../product-add/product.service';
 
@@ -19,6 +20,7 @@ export class ProductDetailComponent implements OnInit {
   constructor(
     route: ActivatedRoute,
     private productService: ProductService,
+    private authenticationService: AuthenticationService,
     private cartService: CartService
   ) {
     route.params.subscribe((params) => {
