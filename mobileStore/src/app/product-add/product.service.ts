@@ -46,7 +46,20 @@ export class ProductService {
   create(data: any): Observable<any> {
     this.isLogin();
 
-    return this.httpClient.post(createUrl, data, { headers: this.headerHttp });
+    return this.httpClient.post<any>(createUrl, data, { headers: this.headerHttp }).pipe(
+      map((data) => {
+        console.log('getListProduct0:::pipedetail', data);
+        if (
+          data.message == 'Failed to authenticate token.' ||
+          data.message == 'No token provided.'
+        ) {
+
+          console.log("FailedFailedFailedFailedFailedFailedFailed");
+          return this.router.navigate(['/login']);
+        }
+      })
+    );
+    ;
   }
 
   update(data: FormData): Observable<any> {
@@ -104,7 +117,15 @@ export class ProductService {
       })
       .pipe(
         map((data) => {
-          console.log('getListProduct0:::pipe', data);
+          console.log('getListProduct0:::pipedetail', data);
+          if (
+            data.message == 'Failed to authenticate token.' ||
+            data.message == 'No token provided.'
+          ) {
+
+            console.log("FailedFailedFailedFailedFailedFailedFailed");
+            return this.router.navigate(['/login']);
+          }
           if (data && data.data) {
             return {
               ...data.data,

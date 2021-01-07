@@ -301,15 +301,21 @@ module.exports = function (app, express) {
         })
         Cart.findOne({ "user_id": newCart.user_id, "prod_id": newCart.prod_id }, (err, cart) => {
             if (cart && cart.count) {
-                cart.count += newCart.count;
-                cart.save((err, doc) => {
-                    if (err) return res.json({ success: false, err });
-                    let ress = doc;
-                    ress.id = doc._id;
-                    return res.status(200).json({
-                        success: true,
-                        data: ress
-                    })
+                Movie.findById(cart.prod_id, function (err, movie) {
+                    if (err) return res.json({ status: false, message: err.message })
+                    else {
+                        if (cart.count < movie.amount)
+                            cart.count += newCart.count;
+                        cart.save((err, doc) => {
+                            if (err) return res.json({ success: false, err });
+                            let ress = doc;
+                            ress.id = doc._id;
+                            return res.status(200).json({
+                                success: true,
+                                data: ress
+                            })
+                        })
+                    }
                 })
             }
             else {
@@ -356,7 +362,6 @@ module.exports = function (app, express) {
 
     });
 
-
     apiRouter.route('/cart/decrease/:cart_id').post(function (req, res) {
         console.log("idddddddddddddddddd", req.params.cart_id)
 
@@ -372,7 +377,7 @@ module.exports = function (app, express) {
                         data: cart
                     });
                 else {
-                    cart.count += 1;
+                    cart.count -= 1;
                     cart.save((err, doc) => {
                         if (err) return res.json({ success: false, err });
                         let ress = doc;
@@ -427,6 +432,34 @@ module.exports = function (app, express) {
         });
 
     });
+
+    apiRouter.route('/cart/check-out').post(async function (req, res) {
+        Cart.find({ user_id: req.decoded.id }, await function (err, carts) {
+            for (let index = 0; index < carts.length; index++) {
+                const cart = carts[index];
+                Movie.findById(cart.prod_id, function (err, movie) {
+                    if (err) return res.json({ status: false, message: err.message });
+                    if (movie && movie.amount) {
+                        movie.amount -= cart.count;
+                        if (movie.amount < 1) {
+                            movie.amount = 0;
+                        }
+                        movie.save((err, doc) => {
+                            if (err) return res.json({ success: false, err });
+                        })
+                    }
+                })
+                Cart.deleteOne({
+                    _id: cart._id
+                }, function (err, movie) {
+                    if (err) return res.json({ success: false, err });
+                });
+
+            }
+            res.json({ status: true, message: 'SUCCESS' })
+        })
+    });
+
 
     return apiRouter;
 };
