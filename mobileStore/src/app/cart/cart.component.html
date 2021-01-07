@@ -9,9 +9,14 @@
     <button type="button" (click)="gotoList()" class="btn btn-warning">
       Continue shopping
     </button>
-    <button type="button" (click)="onRemoveAll()" class="btn btn-danger">
-      Clear cart
-    </button>
+    <div>
+      <button class="btn btn-success mr-2" (click)="checkOutCart()">
+        Sold out
+      </button>
+      <button type="button" (click)="onRemoveAll()" class="btn btn-danger">
+        Clear cart
+      </button>
+    </div>
   </div>
   <div>
     <table class="table">
@@ -27,7 +32,17 @@
       <tbody>
         <tr *ngFor="let item of itemsList; let i = index" [attr.data-index]="i">
           <th>{{ item.prodName }}</th>
-          <th>{{ item.count }}</th>
+          <th>
+            <div class="d-flex flex-row align-items-center">
+              <button class="btn border mr-3" (click)="increaseAmount(item, i)">
+                <span class="fa fa-caret-up"></span>
+              </button>
+              <p class="mb-0">{{ item.count }}</p>
+              <button class="btn border ml-3" (click)="decreaseAmount(item, i)">
+                <span class="fa fa-caret-down"></span>
+              </button>
+            </div>
+          </th>
           <th>{{ item.unitPrice }}</th>
           <th>{{ item.totalPrice }}</th>
           <th>
