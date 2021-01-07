@@ -4,6 +4,8 @@ var config = require('../../config');
 var User = require('../models/user');
 var superSecret = config.secret;
 
+const time_expire = '180s'
+
 module.exports = function (app, express) {
     var apiRouter = express.Router();
     // route to login a user (POST http://localhost:8080/api/authenticate)
@@ -18,7 +20,7 @@ module.exports = function (app, express) {
                 if (err) throw err;
                 // no user with that username was found
                 if (!user) {
-                    res.json({
+                    return res.json({
                         success: false,
                         message: 'Authentication failed. User not found.'
                     });
@@ -26,7 +28,7 @@ module.exports = function (app, express) {
                     // check if password matches
                     var validPassword = user.comparePassword(req.body.password);
                     if (!validPassword) {
-                        res.json({
+                        return res.json({
                             success: false,
                             message: 'Authentication failed. Wrong password.'
                         });
@@ -57,9 +59,8 @@ module.exports = function (app, express) {
                             name: existingUser.name,
                             id: existingUser.id
                         }, superSecret, {
-                            expiresIn: '180s' // expires in 24 hours
+                            expiresIn: time_expire // expires in 24 hours
                         });
-
                         // return the information including token as JSON
                         console.log('userrrrr', existingUser)
                         return res.send({
@@ -80,7 +81,7 @@ module.exports = function (app, express) {
                                     name: user.name,
                                     id: user.id
                                 }, superSecret, {
-                                    expiresIn: '180s' // expires in 24 hours
+                                    expiresIn: time_expire // expires in 24 hours
                                 });
                                 // return the information including token as JSON
                                 return res.send({
@@ -100,7 +101,7 @@ module.exports = function (app, express) {
                             name: existingUser.name,
                             id: existingUser.id
                         }, superSecret, {
-                            expiresIn: '180s' // expires in 24 hours
+                            expiresIn: time_expire // expires in 24 hours
                         });
 
                         // return the information including token as JSON
@@ -123,7 +124,7 @@ module.exports = function (app, express) {
                                     name: user.name,
                                     id: user.id
                                 }, superSecret, {
-                                    expiresIn: '180s' // expires in 24 hours
+                                    expiresIn: time_expire // expires in 24 hours
                                 });
                                 // return the information including token as JSON
                                 return res.send({

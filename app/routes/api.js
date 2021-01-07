@@ -23,8 +23,37 @@ module.exports = function (app, express) {
     var apiRouter = express.Router();
     apiRouter.use('/uploads', express.static('uploads'));
 
+
+    // route middleware to verify a token
+    apiRouter.use(function (req, res, next) {
+        // do logging
+        console.log('Somebody just came to our app!');
+        // check header or url parameters or post parameters for token
+        var token = req.body.token || req.query.token || req.headers['x-access-token'];
+        // decode token
+        if (token) {
+            // verifies secret and checks exp
+            jwt.verify(token, superSecret, function (err, decoded) {
+                if (err)
+                    return res.json({ success: false, message: 'Failed to authenticate token.' });
+                else
+                    // if everything is good, save to request for use in other routes
+                    req.decoded = decoded;
+                next(); // make sure we go to the next routes and don't stop here
+            });
+        } else {
+            // if there is no token
+            // return an HTTP response of 403 (access forbidden) and an error message
+            return res.json({
+                success: false,
+                message: 'No token provided.'
+            });
+        }
+    });
+
+
     apiRouter.post('/movie/create', upload.single("image"), (req, res) => {
-        console.log('createcreatecreatereq',req)
+        console.log('createcreatecreatereq', req)
         const movie = new Movie({
             name: req.body.name,
             price: req.body.price,
@@ -35,21 +64,26 @@ module.exports = function (app, express) {
             status: req.body.status,
             image: req.file.filename
         })
-        movie.save((err, doc) => {
-            if (err) return res.json({ success: false, err });
-            let ress = doc;
-            ress.id = doc._id;
-            res.status(200).json({
-                success: true,
-                data: ress
+        if (movie)
+            movie.save((err, doc) => {
+                if (err) return res.json({ success: false, err });
+                let ress = doc;
+                ress.id = doc._id;
+                return res.status(200).json({
+                    success: true,
+                    data: ress
+                })
             })
+        else return res.json({
+            success: false,
+            message: "Dữ liệu trống!"
         })
     })
-    
+
     apiRouter.post('/movie/update', upload.single("image"), (req, res) => {
         Movie.findById(req.body.id, function (err, movie) {
-            if (err) res.json(err);
-            console.log("bodyyyyyyyyyyyyyyyyyy", req.body, movie);
+            if (err)
+                return res.json(err);
             if (req.body.name) movie.name = req.body.name;
             if (req.body.price) movie.price = req.body.price;
             if (req.body.amount) movie.amount = req.body.amount;
@@ -57,16 +91,24 @@ module.exports = function (app, express) {
             if (req.body.manufacturer) movie.manufacturer = req.body.manufacturer;
             if (req.body.caregory) movie.caregory = req.body.caregory;
             if (req.body.status) movie.status = req.body.status;
-            if (req.body.image) movie.image = req.file.filename;
+            if (req.file.filename) movie.image = req.file.filename;
 
-            movie.save((err, doc) => {
-                if (err) return res.json({ success: false, err });
-                let ress = doc;
-                ress.id = doc._id;
-                res.status(200).json({
-                    success: true,
-                    data: ress
+            if (movie) {
+                console.log("bodyyyyyyyyyyyyyyyyyy", req.body, movie);
+                movie.save((err, doc) => {
+                    if (err) return res.json({ success: false, err });
+                    let ress = doc;
+                    ress.id = doc._id;
+                    return res.json({
+                        success: true,
+                        data: ress
+                    })
                 })
+
+            }
+            else return res.json({
+                success: false,
+                message: "Dữ liệu trống!"
             })
         })
     });
@@ -80,48 +122,15 @@ module.exports = function (app, express) {
             if (err) {
                 // duplicate entry
                 if (err.code == 11000)
-                    res.json({ success: false, message: err.message });
+                    return res.json({ success: false, message: err.message });
                 else
-                    res.json(err);
+                    return res.json(err);
             }
 
             // return a message
-            res.json({ message: 'User created!' });
+            return res.json({ message: 'User created!' });
         });
     })
-
-    // route middleware to verify a token
-    apiRouter.use(function (req, res, next) {
-        // do logging
-        console.log('Somebody just came to our app!');
-
-        // check header or url parameters or post parameters for token
-        var token = req.body.token || req.query.token || req.headers['x-access-token'];
-        // decode token
-        if (token) {
-
-            // verifies secret and checks exp
-            jwt.verify(token, superSecret, function (err, decoded) {
-                if (err)
-                    return res.json({ success: false, message: 'Failed to authenticate token.' });
-                else
-                    // if everything is good, save to request for use in other routes
-                    req.decoded = decoded;
-            });
-
-        } else {
-
-            // if there is no token
-            // return an HTTP response of 403 (access forbidden) and an error message
-            return res.json({
-                success: false,
-                message: 'No token provided.'
-            });
-
-        }
-
-        next(); // make sure we go to the next routes and don't stop here
-    });
 
 
     // accessed at GET http://localhost:8080/api
@@ -130,7 +139,7 @@ module.exports = function (app, express) {
         next();
     });
     apiRouter.get('/', function (req, res) {
-        res.json({ message: 'Hello! Welcom to our API' });
+        return res.json({ message: 'Hello! Welcom to our API' });
     });
     // on routes that end in /users
     // ----------------------------------------------------
@@ -141,27 +150,27 @@ module.exports = function (app, express) {
     // get all the users (accessed at GET http://localhost:8080/api/users)
     // apiRouter.route('/users/list').get(function (req, res) {
     //     User.find(function (err, users) {
-    //         if (err) res.json(err);
+    //         if (err) return res.json(err);
 
     //         // return the users
-    //         res.json(users);
+    //         return res.json(users);
     //     });
     // });
     // // apiRouter.route('/users/:user_id')
     // // get the user with that id
     // apiRouter.route('/users/:user_id').get(function (req, res) {
     //     User.findById(req.params.user_id, function (err, user) {
-    //         if (err) res.json(err);
+    //         if (err) return res.json(err);
 
     //         // return that user
-    //         res.json(user);
+    //         return res.json(user);
     //     });
     // })
     // // update the user with this id
     // apiRouter.route('/users/:user_id').put(function (req, res) {
     //     User.findById(req.params.user_id, function (err, user) {
 
-    //         if (err) res.json(err);
+    //         if (err) return res.json(err);
 
     //         // set the new user information if it exists in the request
     //         if (req.body.name) user.name = req.body.name;
@@ -170,10 +179,10 @@ module.exports = function (app, express) {
 
     //         // save the user
     //         user.save(function (err) {
-    //             if (err) res.json(err);
+    //             if (err) return res.json(err);
 
     //             // return a message
-    //             res.json({ message: 'User updated!' });
+    //             return res.json({ message: 'User updated!' });
     //         });
 
     //     });
@@ -183,29 +192,30 @@ module.exports = function (app, express) {
     //     User.remove({
     //         _id: req.params.user_id
     //     }, function (err, user) {
-    //         if (err) res.json(err);
+    //         if (err) return res.json(err);
 
-    //         res.json({ message: 'Successfully deleted' });
+    //         return res.json({ message: 'Successfully deleted' });
     //     });
     // });
 
     //====== M O V I E ====== M O V I E ====== M O V I E ====== M O V I E ====== M O V I E ====== M O V I E ====== M O V I E 
-    
+
 
     apiRouter.get('/movie/list', (req, res) => {
         Movie.find({}, (err, movie) => {
             if (err)
                 return res.json(err)
-            else return res.json(movie)
+            else
+            return res.json(movie)
         })
     })
 
     apiRouter.route('/movie/detail/:movie_id').get(function (req, res) {
         Movie.findById(req.params.movie_id, function (err, movie) {
             if (err)
-                res.json(err);
+                return res.json(err);
             else
-                res.json({ message: 'User detail!', data: movie });
+                return res.json({ message: 'User detail!', data: movie });
         });
 
     });
@@ -214,10 +224,10 @@ module.exports = function (app, express) {
     apiRouter.route('/movie/update').post(function (req, res) {
         Movie.findById(req.body.id, function (err, movie) {
             if (err)
-                res.json(err);
+                return res.json(err);
             else
                 console.log("bodyyyyyyyyyyyy", req);
-            res.json({ message: 'User detail!', data: req.body });
+            return res.json({ message: 'User detail!', data: req.body });
         });
 
     });
@@ -229,8 +239,8 @@ module.exports = function (app, express) {
             _id: req.body.id
         }, function (err, movie) {
             if (err)
-                res.json(err);
-            res.json({
+                return res.json(err);
+            return res.json({
                 status: "success",
                 data: 'Movie deleted'
             });

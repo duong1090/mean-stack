@@ -13,9 +13,9 @@ app.use(bodyParser.json());
 
 app.use(cors())
 // app.use(function (req, res, next) {
-//     res.header('Access-Control-Allow-Origin', '*');
+//     res.setHeader('Access-Control-Allow-Origin', '*');
 //     res.setHeader('Access-Control-Allow-Methods', 'GET,POST');
-//     res.header('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Authorization,x-access-token, User-Agent, Referer, Accept');
+//     res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Authorization,x-access-token, User-Agent, Referer, Accept');
 //     next();
 // })
 
@@ -34,7 +34,7 @@ var apiRouter = api(app, express);
 app.use('/api', apiRouter);
 
 app.get('*', function (req, res) {
-    res.sendFile(path.join(__dirname + '/public/app/view/index.html'));
+    return res.sendFile(path.join(__dirname + '/public/app/view/index.html'));
 });
 
 app.listen(config.port);

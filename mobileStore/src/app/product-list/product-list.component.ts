@@ -20,13 +20,13 @@ export class ProductListComponent implements OnInit {
     private cartService: CartService,
     private authenticationService: AuthenticationService,
     private router: Router
-  ) {}
+  ) { }
 
   getListProduct = () => {
     this.productService.getListProduct().subscribe((productList: Product[]) => {
-      if (productList.length)
-        this.productList = productList;
-      else this.router.navigateByUrl('/login');
+      // if (productList.length)
+      this.productList = productList;
+      // else this.router.navigateByUrl('/login');
       console.log('getListProduct', typeof productList[0].image);
     });
   };
