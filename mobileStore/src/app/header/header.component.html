@@ -7,10 +7,10 @@
       </div>
       <div class="d-flex flex-row align-items-center" *ngIf="button != 'login'">
         <button
+          *ngIf="!currentUser.is_admin"
           type="button"
           style="margin-right: 20px"
           class="btn btn-light"
-          *ngIf="!currentUser.is_admin"
           routerLink="/cart"
         >
           <i class="fa fa-shopping-cart" aria-hidden="true"></i>

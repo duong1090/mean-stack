@@ -88,7 +88,7 @@ export class AuthenticationService {
             localStorage.setItem('apiToken', user.token);
             localStorage.setItem(
               'currentUser',
-              JSON.stringify({ ...user, is_admin: 1 })
+              JSON.stringify({ ...user, is_admin: user.is_admin })
             );
             return user;
           } else {
