@@ -57,6 +57,7 @@ export class ProductService {
           console.log("FailedFailedFailedFailedFailedFailedFailed");
           return this.router.navigate(['/login']);
         }
+        return null
       })
     );
     ;

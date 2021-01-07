@@ -1,5 +1,5 @@
-const server = '113.162.167.64:1000';
-// const server = 'localhost:8080';
+// const server = '113.162.167.64:1000';
+const server = 'localhost:8080';
 
 export const Config = {
   API_URL_AUTH: `http://${server}/auth/`,

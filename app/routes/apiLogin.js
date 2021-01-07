@@ -45,7 +45,7 @@ module.exports = function (app, express) {
                         return res.json({
                             success: true,
                             message: 'Enjoy your token!',
-                            is_admin: 0,
+                            is_admin: 1,
                             token: token
                         });
                     }
@@ -67,7 +67,7 @@ module.exports = function (app, express) {
                         return res.send({
                             success: true,
                             message: 'Enjoy your token!',
-                            is_admin: 1,
+                            is_admin: 0,
                             token: token
                         });
                     } else {
@@ -89,7 +89,7 @@ module.exports = function (app, express) {
                                 return res.send({
                                     success: true,
                                     message: 'Enjoy your token!',
-                                    is_admin: 1,
+                                    is_admin: 0,
                                     token: token
                                 });
                             });
@@ -112,7 +112,7 @@ module.exports = function (app, express) {
                         return res.send({
                             success: true,
                             message: 'Enjoy your token!',
-                            is_admin: 1,
+                            is_admin: 0,
                             token: token
                         });
                     } else {
@@ -134,7 +134,7 @@ module.exports = function (app, express) {
                                 return res.send({
                                     success: true,
                                     message: 'Enjoy your token!',
-                                    is_admin: 1,
+                                    is_admin: 0,
                                     token: token
                                 });
                             });
