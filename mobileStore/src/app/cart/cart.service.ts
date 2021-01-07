@@ -4,6 +4,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { map } from 'rxjs/operators';
 import { Config } from '../config/server.config';
 import { AuthenticationService } from '../login/authenticate.service';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root',
@@ -14,6 +15,7 @@ export class CartService {
 
   constructor(
     private http: HttpClient,
+    private router: Router,
     private authenticationService: AuthenticationService
   ) {
     let headers: any = {
@@ -51,6 +53,14 @@ export class CartService {
       })
       .pipe(
         map((list) => {
+          if (
+            list.message == 'Failed to authenticate token.' ||
+            list.message == 'No token provided.'
+          ) {
+
+            console.log("FailedFailedFailedFailedFailedFailedFailed");
+            return this.router.navigate(['/login']);
+          }
           console.log('cart:::pipe', list);
           if (list && list.length) {
             return list;
