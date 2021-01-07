@@ -1,4 +1,4 @@
-const server = '113.162.167.183:1000';
+const server = '113.162.167.64:1000';
 // const server = 'localhost:8888';
 
 export const Config = {

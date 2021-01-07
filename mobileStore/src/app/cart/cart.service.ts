@@ -10,36 +10,66 @@ import { AuthenticationService } from '../login/authenticate.service';
 })
 export class CartService {
   private count: any;
+  private headerHttp: HttpHeaders;
 
   constructor(
     private http: HttpClient,
     private authenticationService: AuthenticationService
-  ) {}
+  ) {
+    let headers: any = {
+      'x-access-token': localStorage.getItem('apiToken'),
+    };
+    var values = [],
+      keys = Object.keys(localStorage),
+      i = keys.length;
+
+    while (i--) {
+      values.push(localStorage.getItem(keys[i]));
+    }
+    this.headerHttp = headers;
+  }
+
+  isLogin() {
+    // IF NGƯỢC
+    if (
+      !localStorage.getItem('apiToken') ||
+      localStorage.getItem('apiToken') == undefined
+    ) {
+      this.router.navigate(['/login']);
+    }
+  }
 
   public get countCart(): any {
     return this.count;
   }
 
-  // public getCart = () => {
-  //   const user: any = this.authenticationService.currentUserValue;
-  //   const id: any = user && user.id ? user.id : '';
-  //   return this.http
-  //     .get<any>(Config.API_URL.concat('cart/list').concat(`/${id}`))
-  //     .pipe(
-  //       map((list) => {
-  //         console.log('cart:::pipe', list);
-  //         if (list && list.length) {
-  //           return list;
-  //         } else {
-  //           return null;
-  //         }
-  //       })
-  //     );
-  // };
+  public getCart = () => {
+    const user: any = this.authenticationService.currentUserValue;
+    return this.http
+      .get<any>(Config.API_URL.concat('cart/list'), {
+        headers: this.headerHttp,
+      })
+      .pipe(
+        map((list) => {
+          console.log('cart:::pipe', list);
+          if (list && list.length) {
+            return list;
+          } else {
+            return null;
+          }
+        })
+      );
+  };
 
   public removeCart = (item: any) => {
     return this.http
-      .post<any>(Config.API_URL.concat('cart/delete').concat(`/${item.id}`), {})
+      .post<any>(
+        Config.API_URL.concat('cart/delete').concat(`/${item.id}`),
+        {},
+        {
+          headers: this.headerHttp,
+        }
+      )
       .pipe(
         map((data) => {
           console.log('cart:::remove:::pipe', data);
@@ -54,8 +84,11 @@ export class CartService {
     const user_id: any = user && user.id ? user.id : '';
     return this.http
       .post<any>(
-        Config.API_URL.concat('cart/delete-all').concat(`/${user_id}`),
-        {}
+        Config.API_URL.concat('cart/delete-all'),
+        {},
+        {
+          headers: this.headerHttp,
+        }
       )
       .pipe(
         map((data) => {
@@ -69,11 +102,16 @@ export class CartService {
   public addToCart = (item: any) => {
     console.log('addToCart:::', item);
     const user: any = this.authenticationService.currentUserValue;
-    const user_id: any = user && user.id ? user.id : '';
-    return this.http.post<any>(Config.API_URL.concat('cart/add'), {
-      userId: user_id,
-      prodId: item.id,
-      count: 1,
-    });
+    return this.http.post<any>(
+      Config.API_URL.concat('cart/add'),
+      {
+        // user_id: user_id,
+        prod_id: item.id,
+        count: 1,
+      },
+      {
+        headers: this.headerHttp,
+      }
+    );
   };
 }

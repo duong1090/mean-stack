@@ -45,10 +45,7 @@
               >
                 <i class="fa fa-bars" aria-hidden="true"></i> Update</a
               >
-              <a
-                *ngIf="!currentUser.is_admin"
-                class="btn btn-danger ml-3"
-                (click)="addToCart(product)"
+              <a class="btn btn-danger ml-3" (click)="addToCart(product)"
                 ><i class="fa fa-shopping-cart" aria-hidden="true"></i> Order</a
               >
             </div>

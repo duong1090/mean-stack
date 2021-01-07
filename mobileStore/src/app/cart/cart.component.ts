@@ -34,14 +34,14 @@ export class CartComponent implements OnInit {
     });
   };
 
-  // getCart = () => {
-  //   this.cartService.getCart().subscribe((data) => {
-  //     if (data && data.length) {
-  //       this.itemsList = data;
-  //       this.updateTotalPrice();
-  //     }
-  //   });
-  // };
+  getCart = () => {
+    this.cartService.getCart().subscribe((data) => {
+      if (data && data.length) {
+        this.itemsList = data;
+        this.updateTotalPrice();
+      }
+    });
+  };
 
   updateTotalPrice = () => {
     this.totalPrice = this.itemsList.reduce((sum: any, item: any) => {
@@ -54,6 +54,6 @@ export class CartComponent implements OnInit {
   };
 
   ngOnInit(): void {
-    // this.getCart();
+    this.getCart();
   }
 }

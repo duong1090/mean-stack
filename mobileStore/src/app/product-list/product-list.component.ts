@@ -34,19 +34,19 @@ export class ProductListComponent implements OnInit {
   addToCart = (item: any) => {
     this.cartService.addToCart(item).subscribe((data) => {
       if (data) {
-        // this.getCountCart();
+        this.getCountCart();
       }
     });
   };
 
-  // getCountCart = () => {
-  //   this.cartService.getCart().subscribe((data) => {
-  //     if (data) {
-  //       this.countCart = data.length;
-  //       console.log('getCountCart:::', this.countCart);
-  //     }
-  //   });
-  // };
+  getCountCart = () => {
+    this.cartService.getCart().subscribe((data) => {
+      if (data) {
+        this.countCart = data.length;
+        console.log('getCountCart:::', this.countCart);
+      }
+    });
+  };
 
   getCurrentUser = () => {
     this.currentUser = this.authenticationService.currentUserValue;
@@ -56,7 +56,7 @@ export class ProductListComponent implements OnInit {
   ngOnInit(): void {
     console.log('ngOnInit');
     this.getListProduct();
-    // this.getCountCart();
+    this.getCountCart();
     this.getCurrentUser();
   }
 }
