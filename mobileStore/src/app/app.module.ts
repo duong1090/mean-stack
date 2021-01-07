@@ -17,6 +17,7 @@ import { ProductDetailComponent } from './product-detail/product-detail.componen
 import { ProductAddComponent } from './product-add/product-add.component';
 import { CartComponent } from './cart/cart.component';
 import { ProductUpdateComponent } from './product-update/product-update.component';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
   declarations: [
@@ -29,7 +30,7 @@ import { ProductUpdateComponent } from './product-update/product-update.componen
     CartComponent,
     ProductUpdateComponent,
   ],
-  imports: [BrowserModule, AppRoutingModule, FormsModule, HttpClientModule,SocialLoginModule],
+  imports: [BrowserModule, AppRoutingModule, FormsModule, HttpClientModule,SocialLoginModule, NgbModule],
   providers: [
     {
       provide: 'SocialAuthServiceConfig',

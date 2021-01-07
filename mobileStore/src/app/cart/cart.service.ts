@@ -111,17 +111,56 @@ export class CartService {
 
   public addToCart = (item: any) => {
     console.log('addToCart:::', item);
-    const user: any = this.authenticationService.currentUserValue;
     return this.http.post<any>(
       Config.API_URL.concat('cart/add'),
       {
-        // user_id: user_id,
         prod_id: item.id,
         count: 1,
       },
       {
         headers: this.headerHttp,
       }
+    );
+  };
+
+  public increaseAmount = (item: any) => {
+    console.log('increaseAmount:::', item);
+    return this.http
+      .post<any>(
+        Config.API_URL.concat('cart/increase').concat(`/${item.id}`),
+        {},
+        { headers: this.headerHttp }
+      )
+      .pipe(
+        map((data) => {
+          console.log('cart:::increase:::pipe', data);
+          if (data != null) return data.data;
+          else return null;
+        })
+      );
+  };
+  public decreaseAmount = (item: any) => {
+    console.log('decreaseAmount:::', item);
+    return this.http
+      .post<any>(
+        Config.API_URL.concat('cart/decrease').concat(`/${item.id}`),
+        {},
+        { headers: this.headerHttp }
+      )
+      .pipe(
+        map((data) => {
+          console.log('cart:::decrease:::pipe', data);
+          if (data != null) return data.data;
+          else return null;
+        })
+      );
+  };
+
+  public checkOutCart = () => {
+    return this.http.post<any>(
+      Config.API_URL.concat('cart/check-out'),
+      {},
+      { headers: this.headerHttp }
     );
   };
 }

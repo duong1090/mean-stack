@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CartService } from './cart.service';
 import { Router } from '@angular/router';
+import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-cart',
@@ -47,6 +48,37 @@ export class CartComponent implements OnInit {
     this.totalPrice = this.itemsList.reduce((sum: any, item: any) => {
       return (sum += parseInt(item.totalPrice));
     }, 0);
+  };
+
+  increaseAmount = (item: any, index: any) => {
+    this.cartService.increaseAmount(item).subscribe((data) => {
+      console.log('hihih', data);
+      this.itemsList[index].count++;
+      this.itemsList[index].totalPrice =
+        item.unitPrice * this.itemsList[index].count;
+      this.updateTotalPrice();
+    });
+  };
+
+  decreaseAmount = (item: any, index: any) => {
+    if (item.count > 0) {
+      this.cartService.decreaseAmount(item).subscribe((data) => {
+        this.itemsList[index].count--;
+        this.itemsList[index].totalPrice =
+          item.unitPrice * this.itemsList[index].count;
+        this.updateTotalPrice();
+      });
+    }
+  };
+
+  checkOutCart = () => {
+    this.cartService.checkOutCart().subscribe((data) => {
+      console.log('checkOutCart:::', data);
+      this.updateTotalPrice();
+      window.alert(`Thanh toán thành công. Tổng tiền: ${this.totalPrice}`);
+      this.itemsList = [];
+      this.updateTotalPrice();
+    });
   };
 
   gotoList = () => {
