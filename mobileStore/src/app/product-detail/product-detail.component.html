@@ -19,21 +19,26 @@
           <b>Avaiable Units in Stock : </b>{{ product.amount }}
         </p>
         <p class="mt-2">{{ product.price }} USD</p>
-        <a class="btn btn-success" [routerLink]="['/product/list']">
+        <a
+          class="btn bg-white shadow font-weight-bold text-secondary"
+          [routerLink]="['/product/list']"
+        >
           <i class="fa fa-arrow-left" aria-hidden="true"></i>
           Back
         </a>
         <a
           *ngIf="currentUser.is_admin"
-          class="btn btn-danger ml-3"
+          class="btn bg-white shadow ml-2 text-danger"
           (click)="delete(product.id)"
           [routerLink]="['/product/list']"
         >
           <i class="fa fa-trash" aria-hidden="true"></i>
-          Delete
         </a>
-        <a class="btn btn-warning ml-3" (click)="addToCart(product)">
-          <i class="fa fa-shopping-cart" aria-hidden="true"></i>Order now
+        <a
+          class="btn bg-white shadow ml-2 text-success"
+          (click)="addToCart(product)"
+        >
+          <i class="fa fa-shopping-cart" aria-hidden="true"></i>
         </a>
       </div>
     </div>

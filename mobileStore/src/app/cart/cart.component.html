@@ -6,15 +6,26 @@
 
 <div class="container mt-5 d-flex flex-column align-content-center">
   <div class="action-top mb-5">
-    <button type="button" (click)="gotoList()" class="btn btn-warning">
-      Continue shopping
+    <button
+      type="button"
+      (click)="gotoList()"
+      class="btn bg-white shadow font-weight-bold"
+    >
+      <i class="fa fa-arrow-left"></i> Shopping
     </button>
     <div>
-      <button class="btn btn-success mr-2" (click)="checkOutCart()">
+      <button
+        class="btn border shadow mr-2 font-weight-bold"
+        (click)="checkOutCart()"
+      >
         Check out
       </button>
-      <button type="button" (click)="onRemoveAll()" class="btn btn-danger">
-        Clear cart
+      <button
+        type="button"
+        (click)="onRemoveAll()"
+        class="btn border btn-danger shadow font-weight-bold"
+      >
+        Clear
       </button>
     </div>
   </div>
@@ -26,7 +37,7 @@
           <th>Quantity</th>
           <th>Unit price</th>
           <th>Price</th>
-          <th>Action</th>
+          <th></th>
         </tr>
       </thead>
       <tbody>
@@ -34,11 +45,17 @@
           <th>{{ item.prodName }}</th>
           <th>
             <div class="d-flex flex-row align-items-center">
-              <button class="btn border mr-3" (click)="increaseAmount(item, i)">
+              <button
+                class="btn border mr-3 bg-white shadow"
+                (click)="increaseAmount(item, i)"
+              >
                 <span class="fa fa-caret-up"></span>
               </button>
               <p class="mb-0">{{ item.count }}</p>
-              <button class="btn border ml-3" (click)="decreaseAmount(item, i)">
+              <button
+                class="btn border ml-3 bg-white shadow"
+                (click)="decreaseAmount(item, i)"
+              >
                 <span class="fa fa-caret-down"></span>
               </button>
             </div>
@@ -46,13 +63,13 @@
           <th>{{ item.unitPrice }}</th>
           <th>{{ item.totalPrice }}</th>
           <th>
-            <button class="btn btn-danger" (click)="onRemove(item, i)">
-              Remove
+            <button class="btn btn-danger shadow" (click)="onRemove(item, i)">
+              <i class="fa fa-trash"></i>
             </button>
           </th>
         </tr>
       </tbody>
-      <tfoot>
+      <tfoot class="thead-light">
         <tr>
           <th></th>
           <th></th>

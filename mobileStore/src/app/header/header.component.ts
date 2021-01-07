@@ -34,7 +34,7 @@ export class HeaderComponent implements OnInit {
   };
 
   ngOnInit(): void {
-    // this.getCart();
+    this.getCurrentUser();
   }
 
   getCurrentUser = () => {
@@ -45,6 +45,5 @@ export class HeaderComponent implements OnInit {
   onLogout = () => {
     this.authenticationService.logout();
     this.router.navigateByUrl('/login');
-    this.getCurrentUser();
   };
 }

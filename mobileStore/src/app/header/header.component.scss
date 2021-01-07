@@ -3,6 +3,15 @@
   flex-direction: column;
 }
 
+.background {
+  border: 0px;
+  border-bottom: 2px;
+  margin: 50px;
+  margin-top: 0px;
+  border-color: lightgray;
+  border-style: solid;
+}
+
 .header {
   display: flex;
   width: 100%;
