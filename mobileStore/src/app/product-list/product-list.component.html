@@ -32,7 +32,10 @@
               <img class="mt-2" src="{{ product.image }}" />
               <p class="mt-5">{{ product.description }}</p>
               <p class="mt-2">{{ product.price }} USD</p>
-              <p class="mt-2">{{ product.amount }} in Stock</p>
+              <p *ngIf="product.amount" class="mt-2">
+                {{ product.amount }} in Stock
+              </p>
+              <p *ngIf="!product.amount" class="mt-2">Sold out</p>
               <a
                 class="btn btn-primary"
                 [routerLink]="['/product/detail/' + product.id]"
@@ -40,7 +43,7 @@
                 <i class="fa fa-bars" aria-hidden="true"></i> Details</a
               >
               <a
-              *ngIf="currentUser.is_admin"
+                *ngIf="currentUser.is_admin"
                 class="btn btn-success ml-3"
                 [routerLink]="['/product/update/' + product.id]"
               >
